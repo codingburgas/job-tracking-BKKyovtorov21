@@ -1,0 +1,60 @@
+<div class="jobs-container">
+  <div class="container">
+    <div class="jobs-header">
+      <h1>Available Job Opportunities</h1>
+      <p>Discover your next career move from our curated list of active job postings</p>
+    </div>
+
+    <div class="jobs-grid" *ngIf="jobs.length > 0">
+      <div class="job-card card" *ngFor="let job of jobs">
+        <div class="card-header">
+          <h3>{{ job.title }}</h3>
+          <span class="badge badge-success">{{ job.status }}</span>
+        </div>
+        
+        <div class="card-body">
+          <div class="company-info">
+            <strong>{{ job.company }}</strong>
+          </div>
+          <p class="job-description">{{ job.description | slice:0:200 }}{{ job.description.length > 200 ? '...' : '' }}</p>
+          <div class="job-meta">
+            <small>Posted: {{ job.postingDate | date:'mediumDate' }}</small>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <button 
+            class="btn btn-primary"
+            (click)="viewJob(job.id)"
+          >
+            View Details
+          </button>
+          <button 
+            class="btn btn-accent ml-2"
+            (click)="applyToJob(job.id)"
+            [disabled]="hasApplied(job.id) || isApplying"
+          >
+            <span *ngIf="!hasApplied(job.id) && !isApplying">Apply Now</span>
+            <span *ngIf="hasApplied(job.id)">Already Applied</span>
+            <span *ngIf="isApplying">Applying...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="jobs.length === 0 && !isLoading">
+      <div class="empty-icon">📋</div>
+      <h3>No Active Jobs Available</h3>
+      <p>Check back later for new job opportunities!</p>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading job opportunities...</p>
+    </div>
+
+    <div class="alert" *ngIf="alertMessage" [class]="'alert-' + alertType">
+      {{ alertMessage }}
+    </div>
+  </div>
+</div>

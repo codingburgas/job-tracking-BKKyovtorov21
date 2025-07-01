@@ -1,0 +1,145 @@
+<div class="admin-jobs-container">
+  <div class="container">
+    <div class="admin-header">
+      <h1>Job Management</h1>
+      <p>Create, edit, and manage job listings</p>
+      <button class="btn btn-primary" (click)="showCreateForm()">
+        Create New Job
+      </button>
+    </div>
+
+    <!-- Create/Edit Job Form -->
+    <div class="job-form card" *ngIf="showForm">
+      <div class="card-header">
+        <h3>{{ isEditing ? 'Edit Job' : 'Create New Job' }}</h3>
+      </div>
+      
+      <div class="card-body">
+        <form (ngSubmit)="onSubmit()" #jobForm="ngForm">
+          <div class="form-group">
+            <label class="form-label" for="title">Job Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-control"
+              [(ngModel)]="jobFormData.title"
+              required
+              #title="ngModel"
+              [class.error]="title.invalid && title.touched"
+            />
+            <div class="error-message" *ngIf="title.invalid && title.touched">
+              Job title is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="company">Company</label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="form-control"
+              [(ngModel)]="jobFormData.company"
+              required
+              #company="ngModel"
+              [class.error]="company.invalid && company.touched"
+            />
+            <div class="error-message" *ngIf="company.invalid && company.touched">
+              Company name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="description">Job Description</label>
+            <textarea
+              id="description"
+              name="description"
+              class="form-control"
+              rows="6"
+              [(ngModel)]="jobFormData.description"
+              required
+              #description="ngModel"
+              [class.error]="description.invalid && description.touched"
+            ></textarea>
+            <div class="error-message" *ngIf="description.invalid && description.touched">
+              Job description is required
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="isEditing">
+            <label class="form-label" for="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              class="form-control"
+              [(ngModel)]="jobFormData.status"
+              required
+            >
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="jobForm.invalid || isSubmitting">
+              <span *ngIf="isSubmitting" class="spinner"></span>
+              {{ isEditing ? 'Update Job' : 'Create Job' }}
+            </button>
+            <button type="button" class="btn btn-outline ml-2" (click)="cancelForm()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Jobs List -->
+    <div class="jobs-list" *ngIf="jobs.length > 0">
+      <div class="jobs-grid">
+        <div class="job-card card" *ngFor="let job of jobs">
+          <div class="card-header">
+            <div class="job-info">
+              <h3>{{ job.title }}</h3>
+              <p class="company">{{ job.company }}</p>
+            </div>
+            <span class="badge" [class]="job.status === 'ACTIVE' ? 'badge-success' : 'badge-warning'">
+              {{ job.status }}
+            </span>
+          </div>
+          
+          <div class="card-body">
+            <p class="job-description">{{ job.description | slice:0:150 }}{{ job.description.length > 150 ? '...' : '' }}</p>
+            <div class="job-meta">
+              <small>Posted: {{ job.postingDate | date:'mediumDate' }}</small>
+            </div>
+          </div>
+          
+          <div class="card-footer">
+            <button class="btn btn-outline btn-small" (click)="editJob(job)">
+              Edit
+            </button>
+            <button class="btn btn-danger btn-small ml-1" (click)="deleteJob(job.id)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="jobs.length === 0 && !isLoading">
+      <div class="empty-icon">📋</div>
+      <h3>No Jobs Created</h3>
+      <p>Start by creating your first job listing!</p>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading jobs...</p>
+    </div>
+
+    <div class="alert" *ngIf="alertMessage" [class]="'alert-' + alertType">
+      {{ alertMessage }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="admin-applications-container">
+  <div class="container">
+    <div class="admin-header">
+      <h1>Application Management</h1>
+      <p>Review and manage job applications from candidates</p>
+    </div>
+
+    <div class="applications-list" *ngIf="applications.length > 0">
+      <div class="application-card card" *ngFor="let application of applications">
+        <div class="card-header">
+          <div class="application-info">
+            <h3>{{ application.jobTitle || 'Job Title' }}</h3>
+            <p class="company-name">{{ application.company || 'Company Name' }}</p>
+            <p class="applicant-info">Application #{{ application.id }} • User ID: {{ application.userId }}</p>
+          </div>
+          <span class="badge" [class]="getStatusBadgeClass(application.status)">
+            {{ getStatusText(application.status) }}
+          </span>
+        </div>
+        
+        <div class="card-body">
+          <div class="application-meta">
+            <div class="meta-item">
+              <strong>Submitted:</strong> {{ application.submissionDate | date:'mediumDate' }}
+            </div>
+            <div class="meta-item">
+              <strong>Job ID:</strong> {{ application.jobId }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          <div class="status-actions">
+            <label class="form-label">Update Status:</label>
+            <div class="status-buttons">
+              <button 
+                class="btn btn-primary btn-small"
+                [class.active]="application.status === ApplicationStatus.SUBMITTED"
+                (click)="updateStatus(application.id, ApplicationStatus.SUBMITTED)"
+                [disabled]="isUpdating"
+              >
+                Submitted
+              </button>
+              <button 
+                class="btn btn-accent btn-small"
+                [class.active]="application.status === ApplicationStatus.APPROVED_FOR_INTERVIEW"
+                (click)="updateStatus(application.id, ApplicationStatus.APPROVED_FOR_INTERVIEW)"
+                [disabled]="isUpdating"
+              >
+                Approve for Interview
+              </button>
+              <button 
+                class="btn btn-danger btn-small"
+                [class.active]="application.status === ApplicationStatus.REJECTED"
+                (click)="updateStatus(application.id, ApplicationStatus.REJECTED)"
+                [disabled]="isUpdating"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="applications.length === 0 && !isLoading">
+      <div class="empty-icon">📄</div>
+      <h3>No Applications Received</h3>
+      <p>Applications will appear here once candidates start applying to your job listings.</p>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading applications...</p>
+    </div>
+
+    <div class="alert" *ngIf="alertMessage" [class]="'alert-' + alertType">
+      {{ alertMessage }}
+    </div>
+  </div>
+</div>

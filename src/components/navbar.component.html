@@ -1,0 +1,35 @@
+<nav class="navbar">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="navbar-brand">
+        <a routerLink="/" class="brand-link">
+          <h3>JobTracker</h3>
+        </a>
+      </div>
+      
+      <div class="navbar-menu" *ngIf="currentUser">
+        <div class="nav-links">
+          <ng-container *ngIf="authService.isUser()">
+            <a routerLink="/jobs" routerLinkActive="active" class="nav-link">Browse Jobs</a>
+            <a routerLink="/my-applications" routerLinkActive="active" class="nav-link">My Applications</a>
+          </ng-container>
+          
+          <ng-container *ngIf="authService.isAdmin()">
+            <a routerLink="/admin/jobs" routerLinkActive="active" class="nav-link">Manage Jobs</a>
+            <a routerLink="/admin/applications" routerLinkActive="active" class="nav-link">Applications</a>
+          </ng-container>
+        </div>
+        
+        <div class="user-menu">
+          <span class="user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+          <button class="btn btn-outline btn-small ml-2" (click)="logout()">Logout</button>
+        </div>
+      </div>
+      
+      <div class="auth-links" *ngIf="!currentUser">
+        <a routerLink="/login" class="btn btn-outline mr-2">Login</a>
+        <a routerLink="/register" class="btn btn-primary">Register</a>
+      </div>
+    </div>
+  </div>
+</nav>

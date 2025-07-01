@@ -1,0 +1,65 @@
+<div class="job-detail-container">
+  <div class="container">
+    <div class="back-button">
+      <button class="btn btn-outline" (click)="goBack()">
+        ← Back to Jobs
+      </button>
+    </div>
+
+    <div class="job-detail-card card" *ngIf="job">
+      <div class="card-header">
+        <div class="job-header-content">
+          <h1>{{ job.title }}</h1>
+          <span class="badge badge-success">{{ job.status }}</span>
+        </div>
+        <div class="company-info">
+          <h2>{{ job.company }}</h2>
+          <p class="posting-date">Posted: {{ job.postingDate | date:'fullDate' }}</p>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <div class="job-description">
+          <h3>Job Description</h3>
+          <p>{{ job.description }}</p>
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <button 
+          class="btn btn-primary btn-large"
+          (click)="applyToJob()"
+          [disabled]="hasApplied || isApplying"
+          *ngIf="authService.isUser()"
+        >
+          <span *ngIf="!hasApplied && !isApplying">Apply for this Position</span>
+          <span *ngIf="hasApplied">Already Applied</span>
+          <span *ngIf="isApplying">Submitting Application...</span>
+        </button>
+        
+        <div class="application-status" *ngIf="hasApplied">
+          <div class="status-info">
+            <span class="badge badge-info">Application Submitted</span>
+            <p>Your application has been received. You will be notified of any updates.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="!job && isLoading">
+      <div class="spinner"></div>
+      <p>Loading job details...</p>
+    </div>
+
+    <div class="error-state" *ngIf="!job && !isLoading">
+      <div class="error-icon">❌</div>
+      <h3>Job Not Found</h3>
+      <p>The job you're looking for doesn't exist or has been removed.</p>
+      <button class="btn btn-primary" (click)="goBack()">Back to Jobs</button>
+    </div>
+
+    <div class="alert" *ngIf="alertMessage" [class]="'alert-' + alertType">
+      {{ alertMessage }}
+    </div>
+  </div>
+</div>
